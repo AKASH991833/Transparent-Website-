@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Admin</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-wind"></i><h2>ANSH ADMIN</h2></div>
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="products.html" class="nav-link active"><i class="fas fa-box"></i> Products</a>
+            <a href="services.html" class="nav-link"><i class="fas fa-tools"></i> Services</a>
+            <a href="contacts.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="../index.html" class="nav-link" target="_blank"><i class="fas fa-external-link-alt"></i> Website</a>
+            <a href="#" class="nav-link logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <h1>Products Management</h1>
+            <button class="btn" onclick="openModal('add')"><i class="fas fa-plus"></i> Add Product</button>
+        </header>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Buy Price</th>
+                        <th>Rent Price</th>
+                        <th>Badge</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTable"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add Product</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="category" required>
+                            <option value="Split AC">Split AC</option>
+                            <option value="Window AC">Window AC</option>
+                            <option value="Inverter AC">Inverter AC</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Buy Price (₹)</label>
+                        <input type="number" id="buyPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rent Price (₹/month)</label>
+                        <input type="number" id="rentPrice" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Buy Description</label>
+                    <textarea id="buyDesc" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Rent Description</label>
+                    <textarea id="rentDesc" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-save"></i> Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        if (!localStorage.getItem('admin_logged_in')) window.location.href = 'index.html';
+        
+        let products = [];
+        
+        async function loadProducts() {
+            try {
+                const res = await fetch('/api/products');
+                products = await res.json();
+            } catch(e) {
+                products = [
+                    {id:1, name:'Ansh Pro Cool Split', category:'Split AC', buyPrice:42999, rentPrice:2499, badge:'best-seller', image:'split-ac.jpg'},
+                    {id:2, name:'Ansh Elite Window', category:'Window AC', buyPrice:32499, rentPrice:1799, badge:'new', image:'window-ac.jpg'},
+                    {id:3, name:'Ansh Max Inverter Pro', category:'Inverter AC', buyPrice:54999, rentPrice:3299, badge:'hot', image:'cassette-ac.jpg'}
+                ];
+            }
+            renderProducts();
+        }
+        
+        function renderProducts() {
+            const tbody = document.getElementById('productsTable');
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td><img src="../../${p.image || 'split-ac.jpg'}" class="thumb"></td>
+                    <td>${p.name}</td>
+                    <td>${p.category}</td>
+                    <td>₹${Number(p.buyPrice).toLocaleString()}</td>
+                    <td>₹${Number(p.rentPrice).toLocaleString()}/mo</td>
+                    <td><span class="badge">${p.badge || ''}</span></td>
+                    <td>
+                        <button class="btn-sm edit" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn-sm delete" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function openModal(mode, id) {
+            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('modalTitle').textContent = mode === 'add' ? 'Add Product' : 'Edit Product';
+        }
+        
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        function editProduct(id) {
+            openModal('edit', id);
+        }
+        
+        function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                renderProducts();
+            }
+        }
+        
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            closeModal();
+            renderProducts();
+        });
+        
+        function logout() { localStorage.removeItem('admin_logged_in'); window.location.href = 'index.html'; }
+        
+        // Set background dynamically
+        document.body.style.background = `
+            linear-gradient(135deg, rgba(9,9,11,0.8), rgba(9,9,11,0.9)),
+            url('../../images/Background.png') center/cover fixed
+        `;
+        
+        loadProducts();
+    </script>
+</body>
+</html>

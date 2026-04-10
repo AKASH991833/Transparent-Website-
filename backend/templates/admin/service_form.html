@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1 style="margin-bottom: 2rem;">Edit Service</h1>
+
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        {% if service %}
+        <input type="hidden" name="existing_image" value="{{ service.image }}">
+        {% endif %}
+        
+        <div class="form-group">
+            <label>Service Title</label>
+            <input type="text" name="title" value="{{ service.title if service else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" required>{{ service.description if service else '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Display Order</label>
+            <input type="number" name="order_index" value="{{ service.order_index if service else 0 }}" min="1" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Service Image</label>
+            {% if service %}
+            <div style="margin-bottom: 1rem;">
+                <img src="/static/images/{{ service.image }}" alt="Current" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                <p style="margin-top: 0.5rem; color: #6b7280;">Current: {{ service.image }}</p>
+            </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*">
+        </div>
+        
+        <button type="submit" class="btn">
+            <i class="fas fa-save"></i> Save Service
+        </button>
+        <a href="/admin/services" class="btn btn-secondary" style="margin-left: 1rem;">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

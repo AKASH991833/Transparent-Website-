@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Contact Submissions</h1>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for contact in contacts %}
+        <tr class="{% if not contact.is_read %}unread{% endif %}">
+            <td>{{ contact.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td><strong>{{ contact.name }}</strong></td>
+            <td>{{ contact.email }}</td>
+            <td>{{ contact.message[:50] if contact.message else 'No message' }}...</td>
+            <td>
+                {% if contact.is_read %}
+                <span class="badge badge-success">Read</span>
+                {% else %}
+                <span class="badge badge-warning">Unread</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if not contact.is_read %}
+                <a href="/admin/contacts/mark_read/{{ contact.id }}" class="action-btn view">
+                    <i class="fas fa-check"></i>
+                </a>
+                {% endif %}
+                <a href="/admin/contacts/delete/{{ contact.id }}" class="action-btn delete" 
+                   onclick="return confirm('Delete this message?')">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

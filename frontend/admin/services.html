@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Admin</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-wind"></i><h2>ANSH ADMIN</h2></div>
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="products.html" class="nav-link"><i class="fas fa-box"></i> Products</a>
+            <a href="services.html" class="nav-link active"><i class="fas fa-tools"></i> Services</a>
+            <a href="contacts.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="../index.html" class="nav-link" target="_blank"><i class="fas fa-external-link-alt"></i> Website</a>
+            <a href="#" class="nav-link logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar"><h1>Services Management</h1></header>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Image</th><th>Title</th><th>Description</th><th>Order</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="servicesTable"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        if (!localStorage.getItem('admin_logged_in')) window.location.href = 'index.html';
+        
+        const services = [
+            {id:1, title:'AC Installation', desc:'Professional setup for all AC types', order:1, image:'ac-installation.jpg'},
+            {id:2, title:'AC Cleaning', desc:'Deep cleaning with anti-bacterial wash', order:2, image:'ac-cleaning.jpg'},
+            {id:3, title:'Gas Refill', desc:'R410A & R32 gas with leak detection', order:3, image:'gas-refill.jpg'},
+            {id:4, title:'AC Repair', desc:'Same-day repair with genuine parts', order:4, image:'ac-repair.jpg'},
+            {id:5, title:'AMC Service', desc:'Yearly maintenance with priority support', order:5, image:'amc-service.jpg'},
+            {id:6, title:'PCB Repair', desc:'Component level repair for inverters', order:6, image:'pcb-repair.jpg'}
+        ];
+        
+        function renderServices() {
+            const tbody = document.getElementById('servicesTable');
+            tbody.innerHTML = services.map(s => `
+                <tr>
+                    <td><img src="../../${s.image}" class="thumb"></td>
+                    <td>${s.title}</td>
+                    <td>${s.desc}</td>
+                    <td>${s.order}</td>
+                    <td>
+                        <button class="btn-sm edit" onclick="alert('Edit service ${s.id}')"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function logout() { localStorage.removeItem('admin_logged_in'); window.location.href = 'index.html'; }
+        
+        // Set background dynamically
+        document.body.style.background = `
+            linear-gradient(135deg, rgba(9,9,11,0.8), rgba(9,9,11,0.9)),
+            url('../../images/Background.png') center/cover fixed
+        `;
+        
+        renderServices();
+    </script>
+</body>
+</html>

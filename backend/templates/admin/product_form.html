@@ -1,0 +1,82 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<h1 style="margin-bottom: 2rem;">{{ 'Edit' if product else 'Add' }} Product</h1>
+
+<div class="form-card">
+    <form method="POST" enctype="multipart/form-data">
+        {% if product %}
+        <input type="hidden" name="existing_image" value="{{ product.image }}">
+        {% endif %}
+        
+        <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" name="name" value="{{ product.name if product else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Category</label>
+            <select name="category" required>
+                <option value="Split AC" {% if product and product.category == 'Split AC' %}selected{% endif %}>Split AC</option>
+                <option value="Window AC" {% if product and product.category == 'Window AC' %}selected{% endif %}>Window AC</option>
+                <option value="Inverter AC" {% if product and product.category == 'Inverter AC' %}selected{% endif %}>Inverter AC</option>
+                <option value="Cassette AC" {% if product and product.category == 'Cassette AC' %}selected{% endif %}>Cassette AC</option>
+            </select>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label>Buy Price (₹)</label>
+                <input type="number" name="buy_price" value="{{ product.buy_price if product else 0 }}" required>
+            </div>
+            <div class="form-group">
+                <label>Rent Price (₹/month)</label>
+                <input type="number" name="rent_price" value="{{ product.rent_price if product else 0 }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Old Price (₹) - Optional</label>
+            <input type="number" name="old_price" value="{{ product.old_price if product else 0 }}">
+        </div>
+        
+        <div class="form-group">
+            <label>Buy Description</label>
+            <textarea name="description_buy" required>{{ product.description_buy if product else '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Rent Description</label>
+            <textarea name="description_rent" required>{{ product.description_rent if product else '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Badge</label>
+            <select name="badge">
+                <option value="">None</option>
+                <option value="best-seller" {% if product and product.badge == 'best-seller' %}selected{% endif %}>Best Seller</option>
+                <option value="new" {% if product and product.badge == 'new' %}selected{% endif %}>New</option>
+                <option value="hot" {% if product and product.badge == 'hot' %}selected{% endif %}>Hot</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Product Image</label>
+            {% if product %}
+            <div style="margin-bottom: 1rem;">
+                <img src="/static/images/{{ product.image }}" alt="Current" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                <p style="margin-top: 0.5rem; color: #6b7280;">Current: {{ product.image }}</p>
+            </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*">
+        </div>
+        
+        <button type="submit" class="btn">
+            <i class="fas fa-save"></i> Save Product
+        </button>
+        <a href="/admin/products" class="btn btn-secondary" style="margin-left: 1rem;">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

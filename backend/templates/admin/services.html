@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Services Management</h1>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Order</th>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+        <tr>
+            <td>{{ service.order_index }}</td>
+            <td>
+                <img src="/static/images/{{ service.image }}" alt="{{ service.title }}" 
+                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+            </td>
+            <td>{{ service.title }}</td>
+            <td>{{ service.description[:50] }}...</td>
+            <td>
+                <a href="/admin/services/edit/{{ service.id }}" class="action-btn edit">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Ansh Air Cool</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-page {
+            background: linear-gradient(135deg, rgba(225,29,72,0.7), rgba(102,126,234,0.7)),
+                        url('../../images/Background.png') center/cover fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            position: relative;
+            z-index: 10;
+        }
+        .login-box .logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #e11d48;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+        .hero-images {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .hero-images img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-box">
+        <div class="hero-images">
+            <img src="../../images/split-ac.jpg" alt="AC">
+            <img src="../../images/window-ac.jpg" alt="AC">
+            <img src="../../images/cassette-ac.jpg" alt="AC">
+        </div>
+        
+        <div class="logo">
+            <i class="fas fa-wind"></i>
+            <h1>ANSH AIR COOL</h1>
+            <p>Admin Panel</p>
+        </div>
+        
+        <div id="errorMsg" class="error" style="display:none;"></div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" required placeholder="Enter username">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" required placeholder="Enter password">
+            </div>
+            <button type="submit" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+        
+        <div class="hint">
+            <p>Default: <strong>admin</strong> / <strong>admin123</strong></p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Local authentication (no server needed)
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('admin_logged_in', 'true');
+                localStorage.setItem('admin_username', 'admin');
+                window.location.href = 'dashboard.html';
+            } else {
+                const err = document.getElementById('errorMsg');
+                err.textContent = 'Invalid username or password';
+                err.style.display = 'block';
+                
+                // Shake animation
+                document.querySelector('.login-box').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.login-box').style.animation = '';
+                }, 500);
+            }
+        });
+        
+        // Shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-10px); }
+                40%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Set background dynamically
+        document.body.style.background = `
+            linear-gradient(135deg, rgba(225,29,72,0.7), rgba(102,126,234,0.7)),
+            url('../../images/Background.png') center/cover fixed
+        `;
+    </script>
+</body>
+</html>

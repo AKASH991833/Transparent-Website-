@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ANSH AIR COOL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e11d48;
+            --primary-dark: #be123c;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        .sidebar-logo-text h2 {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+        .sidebar-logo-text p {
+            font-size: 0.6875rem;
+            opacity: 0.7;
+        }
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+        .menu-label {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.5;
+        }
+        .menu-item {
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: var(--primary);
+        }
+        .menu-item.active {
+            background: rgba(225, 29, 72, 0.15);
+            border-left-color: var(--primary);
+        }
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            opacity: 0.7;
+        }
+        .menu-item.active i {
+            opacity: 1;
+            color: var(--primary);
+        }
+        .menu-item span {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+        .topbar {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .topbar-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .user-details h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .user-details p {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        .btn-logout {
+            padding: 0.5rem 1rem;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            background: var(--gray-200);
+        }
+        .btn-logout i {
+            margin-right: 0.5rem;
+        }
+        /* Content Area */
+        .content-area {
+            padding: 2rem;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        .stat-icon.blue { background: #dbeafe; color: #3b82f6; }
+        .stat-icon.green { background: #d1fae5; color: #10b981; }
+        .stat-icon.orange { background: #fed7aa; color: #f97316; }
+        .stat-icon.red { background: #fecaca; color: #ef4444; }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-600);
+            background: var(--gray-50);
+        }
+        td {
+            font-size: 0.875rem;
+        }
+        tr:hover td {
+            background: var(--gray-50);
+        }
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-header h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--gray-600);
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fed7aa; color: #92400e; }
+        .badge-danger { background: #fecaca; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            padding: 0.375rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .action-btn.edit {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        .action-btn.delete {
+            background: #fecaca;
+            color: #ef4444;
+        }
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            padding: 0.875rem 1.25rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--success);
+            min-width: 280px;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            z-index: 150;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .content-area {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <div class="sidebar-logo-text">
+                    <h2>ANSH AIR COOL</h2>
+                    <p>Admin Panel</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-label">Main</div>
+            <div class="menu-item active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-label">Content Management</div>
+            <div class="menu-item" data-section="hero">
+                <i class="fas fa-image"></i>
+                <span>Hero Section</span>
+            </div>
+            <div class="menu-item" data-section="marquee">
+                <i class="fas fa-scroll"></i>
+                <span>Marquee Text</span>
+            </div>
+            <div class="menu-item" data-section="products">
+                <i class="fas fa-box"></i>
+                <span>Products</span>
+            </div>
+            <div class="menu-item" data-section="services">
+                <i class="fas fa-concierge-bell"></i>
+                <span>Services</span>
+            </div>
+            <div class="menu-label">Settings</div>
+            <div class="menu-item" data-section="settings">
+                <i class="fas fa-cog"></i>
+                <span>Site Settings</span>
+            </div>
+            <div class="menu-item" data-section="contacts">
+                <i class="fas fa-envelope"></i>
+                <span>Contacts</span>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-details">
+                        <h3 id="username">Admin</h3>
+                        <p>Administrator</p>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Toast Container -->
+            <div class="toast-container" id="toastContainer"></div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="statProducts">0</div>
+                        <div class="stat-label">Active Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-concierge-bell"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="statServices">0</div>
+                        <div class="stat-label">Active Services</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="statContacts">0</div>
+                        <div class="stat-label">Total Contacts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon red">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="statUnread">0</div>
+                        <div class="stat-label">Unread Messages</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hero Section -->
+            <section id="hero" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-image"></i> Hero Section Settings</h2>
+                        <button class="btn btn-primary" onclick="saveHeroSettings()">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form id="heroForm">
+                            <div class="form-group">
+                                <label>Trust Badge Text</label>
+                                <input type="text" class="form-control" id="trustBadge_text">
+                            </div>
+                            <div class="form-group">
+                                <label>Title Line 1</label>
+                                <input type="text" class="form-control" id="titleLine1">
+                            </div>
+                            <div class="form-group">
+                                <label>Title Line 2</label>
+                                <input type="text" class="form-control" id="titleLine2">
+                            </div>
+                            <div class="form-group">
+                                <label>Title Line 3</label>
+                                <input type="text" class="form-control" id="titleLine3">
+                            </div>
+                            <div class="form-group">
+                                <label>Subtitle</label>
+                                <textarea class="form-control" id="subtitle" rows="3"></textarea>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                <div>
+                                    <h4 style="margin-bottom: 0.5rem;">Stat 1</h4>
+                                    <input type="number" class="form-control" id="stat1Number" style="margin-bottom: 0.5rem;">
+                                    <input type="text" class="form-control" id="stat1Suffix" placeholder="Suffix (e.g., +)">
+                                    <input type="text" class="form-control" id="stat1Label" placeholder="Label" style="margin-top: 0.5rem;">
+                                </div>
+                                <div>
+                                    <h4 style="margin-bottom: 0.5rem;">Stat 2</h4>
+                                    <input type="number" class="form-control" id="stat2Number" style="margin-bottom: 0.5rem;">
+                                    <input type="text" class="form-control" id="stat2Suffix" placeholder="Suffix (e.g., K+)">
+                                    <input type="text" class="form-control" id="stat2Label" placeholder="Label" style="margin-top: 0.5rem;">
+                                </div>
+                                <div>
+                                    <h4 style="margin-bottom: 0.5rem;">Stat 3</h4>
+                                    <input type="number" class="form-control" id="stat3Number" style="margin-bottom: 0.5rem;">
+                                    <input type="text" class="form-control" id="stat3Suffix" placeholder="Suffix (e.g., %)">
+                                    <input type="text" class="form-control" id="stat3Label" placeholder="Label" style="margin-top: 0.5rem;">
+                                </div>
+                            </div>
+                            <h4 style="margin: 1.5rem 0 0.5rem;">Quick Features</h4>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="feature1" placeholder="Feature 1" style="margin-bottom: 0.5rem;">
+                                <input type="text" class="form-control" id="feature2" placeholder="Feature 2" style="margin-bottom: 0.5rem;">
+                                <input type="text" class="form-control" id="feature3" placeholder="Feature 3">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marquee Section -->
+            <section id="marquee" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-scroll"></i> Marquee Text Items</h2>
+                        <button class="btn btn-primary" onclick="showMarqueeModal()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Main Text</th>
+                                        <th>Sub Text</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="marqueeTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-box"></i> Products Management</h2>
+                        <button class="btn btn-primary" onclick="showProductModal()">
+                            <i class="fas fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Buy Price</th>
+                                        <th>Rent Price</th>
+                                        <th>Badge</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section id="services" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-concierge-bell"></i> Services Management</h2>
+                        <button class="btn btn-primary" onclick="showServiceModal()">
+                            <i class="fas fa-plus"></i> Add Service
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Title</th>
+                                        <th>Icon</th>
+                                        <th>Order</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="servicesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Site Settings Section -->
+            <section id="settings" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-cog"></i> Site Settings</h2>
+                        <button class="btn btn-primary" onclick="saveSiteSettings()">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <form id="siteForm">
+                            <div class="form-group">
+                                <label>Site Name</label>
+                                <input type="text" class="form-control" id="siteName">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" id="sitePhone">
+                            </div>
+                            <div class="form-group">
+                                <label>WhatsApp Number</label>
+                                <input type="text" class="form-control" id="siteWhatsapp">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" id="siteEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" id="siteAddress" rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contacts Section -->
+            <section id="contacts" class="section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-envelope"></i> Contact Submissions</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contactsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script src="admin.js"></script>
+</body>
+</html>
